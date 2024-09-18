@@ -26,7 +26,7 @@ def upgrade() -> None:
         sa.Column('email', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column('first_name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column('last_name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column('id', sqlmodel.sql.sqltypes.GUID(), nullable=False),
+        sa.Column('id', sa.Uuid(), nullable=False),
         sa.Column(
             'hashed_password', sqlmodel.sql.sqltypes.AutoString(), nullable=False
         ),
