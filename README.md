@@ -7,28 +7,91 @@ and efficient web services with Python.
 <details open>
     <summary><h2>Features</h2></summary>
 
-- **FastAPI**: High-performance, asynchronous web framework for building APIs.
-- **SQLModel**: Combining SQLAlchemy and Pydantic, SQLModel provides fast and flexible
-database interaction with type-safe models.
-- **PostgreSQL**: Robust relational database used for persistent data storage.
-- **Database Session Management**: Sessions are managed using FastAPI's dependency
-injection system, ensuring proper lifecycle management that commits on success and
-rolls back in case of errors.
-- **CLI Tools**: Command-line interface (CLI) built with Click to easily manage
-and automate tasks like running migrations, starting services, etc.
-- **Secrets Management**: AWS Secrets Manager is used for securely handling sensitive
-information (e.g., database credentials).
-- **Authentication & Security**: Token-based authentication using JWT, ensuring secure
-and stateless communication between clients and the backend, as well as custom token
-authentication for administrative API calls and service to service communication.
-- **Caching**: Configurable caching, supporting both in-memory and Redis-based backends
+- [**FastAPI**](template_project/api/factories.py#L30): High-performance, asynchronous web framework for building APIs.
+
+- [**Database Session Management**](template_project/db/factories.py#L39): Sessions are
+managed using FastAPI's dependency injection system, ensuring proper lifecycle
+management that commits on success and rolls back in case of errors.
+
+    ```python
+    from fastapi import APIRouter
+
+    router = APIRouter()
+
+    @router.get("/")
+    async def example(session: Session = Depends(get_session_by_user)):
+        pass
+    ```
+
+- [**Caching**](template_project/api/cache.py): Configurable caching, supporting both in-memory and Redis-based backends
 for better performance and scalability.
+
+    ```python
+    from fastapi_cache.decorator import cache
+
+    @cache(namespace="example")
+    async def example():
+        pass
+    ```
+
+- [**SQLModel**](template_project/models/database.py): Combining SQLAlchemy and Pydantic,
+SQLModel provides fast and flexible database interaction with type-safe models.
+
+    ```python
+    class User(UserBase, table=True):
+        __tablename__ = "users"  # type: ignore
+        id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+        hashed_password: str
+        created_at: datetime = Field(
+            default=None, sa_column_kwargs={"server_default": func.now()}
+        )
+        updated_at: datetime = Field(
+            default=None,
+            sa_column_kwargs={"server_default": func.now(), "onupdate": func.now()},
+        )
+    ```
+
+- **PostgreSQL**: Robust relational database used for persistent data storage.
+
+- [**CLI Tools**](template_project/cli.py#L10): Command-line interface (CLI) built with
+Click to easily manage and automate tasks like running migrations, starting services, etc.
+
+    ```python
+    import click
+
+    @click.group()
+    def cli():
+        pass
+
+    @cli.command()
+    def example():
+        print("Example command")
+    ```
+
+- [**Secrets Management**](template_project/secrets.py#L30): AWS Secrets Manager is used for securely handling sensitive
+information (e.g., database credentials).
+
+    ```python
+    class SecretDatabaseSettings(SecretBaseSettings):
+        model_config = SettingsConfigDict(env_prefix='PG_')
+        USER: str
+        PASSWORD: str
+    ```
+
+- [**Authentication & Security**](template_project/api/auth.py#L11): Token-based
+authentication using JWT, ensuring secure and stateless communication between clients
+and the backend, as well as [custom token authentication](template_project/api/auth.py#L37)
+for administrative API calls and service to service communication.
+
 - **Separation of Concerns**: Enforce a clean architecture that separates business
 logic, data models, and API routes, facilitating easy maintenance and extensibility.
+
 - **Code Formatting with Black**: Ensures consistent code style across the project by
 automatically formatting Python code to follow the PEP 8 standard. Black helps keep the
 code clean and readable with minimal configuration, promoting a uniform development environment.
+
 - **Database Migrations**: Seamless database schema management and migrations using Alembic.
+
 - **Dockerized**: Fully containerized with Docker for simplified deployment and
 development workflows.
 
@@ -178,3 +241,21 @@ docker run -it --rm --env-file=.env -p 8000:8000 project-template:latest templat
 Yoy can now access the api interactive documentation at `http://localhost:8000/docs`.
 
 </details>
+
+
+## Roadmap
+
+* Docstrings:
+
+    Adding docstrings to all functions and classes to improve code readability and
+    provide clear documentation for future developers.
+
+* Unit tests:
+
+    Implementing unit tests to ensure code reliability and ease of maintenance. This
+    will help catch bugs early and verify that changes don’t break existing functionality.
+
+* HTML template:
+
+    Integrating an HTML template using Jinja for dynamic content rendering, enhancing
+    the flexibility and presentation of the application’s user interface.
