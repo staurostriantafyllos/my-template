@@ -28,6 +28,23 @@ def entity_not_found_exception_handler(
 
 
 def create_api_application() -> FastAPI:
+    """
+    Create and configure a `FastAPI` application instance.
+
+    Set up the `FastAPI` application, enable the docs page based on environment setting,
+    add middleware for handling Cross-Origin Resource Sharing (CORS), include application
+    routers and set up custom exception handling. Environment configuration is loaded
+    using the `APISettings` model.
+
+    Returns:
+        A `FastAPI` application instance.
+
+    Middleware:
+        - `CORSMiddleware` to handle CORS. CORS origins are set up in the environment.
+
+    Exception Handlers:
+        - Adds a custom exception handler for `EntityNotFoundException`.
+    """
     api_config = APISettings()  # type: ignore
 
     if api_config.DOCS_ENABLED:

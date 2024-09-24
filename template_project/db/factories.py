@@ -12,6 +12,16 @@ engine = None
 
 
 def create_database_engine() -> Engine:
+    """
+    Create and configure a `SQLAlchemy` database engine for PostgreSQL.
+
+    Create a `SQLAlchemy` engine for PostgreSQL using credentials and configuration
+    options found in the environment. The environment configuration is loaded using the
+    `SecretDatabaseSettings` and `DatabaseSettings` models.
+
+    Returns:
+        A configured `SQLAlchemy` engine for interacting with the PostgreSQL database.
+    """
     connection_string = URL.create(
         "postgresql",
         username=secret.USER,
@@ -37,6 +47,20 @@ def create_database_engine() -> Engine:
 
 
 def get_db_session():
+    """
+    Provide a database session.
+
+    Check if a `SQLAlchemy` engine exists and create it if necessary. Yield a new
+    database session and handle committing the session after use and roll back in case
+    of any exceptions.
+
+    Yields:
+        A `SQLModel` session object for interacting with the database.
+
+    Raises:
+        Any exception raised during the session operation, including but not limited to
+        database connection errors, query execution errors, or transaction errors.
+    """
     global engine
     if not engine:
         engine = create_database_engine()
@@ -54,4 +78,21 @@ def get_db_session():
 
 @contextmanager
 def get_session_ctx():
+    """
+    Context manager for obtaining a database session.
+
+    Yield a database session within a context manager, allowing for easy integration of
+    session management in a `with` statement, ensuring that the session is properly handled.
+
+    Yields:
+        A `SQLModel` session object for interacting with the database.
+
+    Usage:
+        Use this context manager to automatically manage the session lifecycle:
+
+        ```python
+        with get_session_ctx() as session:
+            # Perform database operations
+        ```
+    """
     yield from get_db_session()
