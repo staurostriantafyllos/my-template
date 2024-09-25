@@ -1,0 +1,16 @@
+services:
+    db:
+        image: postgres
+        ports:
+            - "5432:5432"
+        env_file:
+            - ./.env
+    api:
+        image: project-template
+        env_file:
+            - ./.env
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+        command: template-cli api start

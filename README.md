@@ -92,8 +92,11 @@ code clean and readable with minimal configuration, promoting a uniform developm
 
 - **Database Migrations**: Seamless database schema management and migrations using Alembic.
 
-- **Dockerized**: Fully containerized with Docker for simplified deployment and
+- [**Dockerized**](Dockerfile): Fully containerized with Docker for simplified deployment and
 development workflows.
+
+- [**Docker Compose**](docker-compose.yaml): The project uses Docker Compose for easy setup and management of
+the application and its dependencies, ensuring a consistent environment.
 
 </details>
 
@@ -238,7 +241,13 @@ To run the api server using docker, execute:
 docker run -it --rm --env-file=.env -p 8000:8000 project-template:latest template-cli api start
 ```
 
-Yoy can now access the api interactive documentation at `http://localhost:8000/docs`.
+You can also use docker compose:
+
+```bash
+docker compose up
+```
+
+You can now access the api interactive documentation at `http://localhost:8000/docs`.
 
 </details>
 
